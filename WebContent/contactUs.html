@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>联系我们</title>
+
+<link rel="stylesheet" href="resources/css/register.css" />
+<script type="text/javascript" src="resources/js/header.js"></script>
+<link href="resources/css/main.css" rel="stylesheet">
+<link href="resources/css/header.css" rel="stylesheet">
+
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+<!--引用百度地图API-->
+<style type="text/css">
+.iw_poi_title {
+	color: #CC5522;
+	font-size: 14px;
+	font-weight: bold;
+	overflow: hidden;
+	padding-right: 13px;
+	white-space: nowrap
+}
+
+.iw_poi_content {
+	font: 12px arial, sans-serif;
+	overflow: visible;
+	padding-top: 4px;
+	white-space: -moz-pre-wrap;
+	word-wrap: break-word
+}
+</style>
+<script type="text/javascript"
+	src="http://api.map.baidu.com/api?key=&v=1.1&services=true"></script>
+<script type="text/javascript">
+function checkLogin() {
+	var userTel = getCookie('userPhoneNumber');
+	if (userTel == "" || userTel == null) {
+		$('#longandregist').show();
+	} else {
+		$('#longandregist').hide();
+	}
+}
+//获取cookie的值
+function getCookie(c_name) {
+	if (document.cookie.length > 0) {
+		c_start = document.cookie.indexOf(c_name + "=");
+		if (c_start != -1) {
+			c_start = c_start + c_name.length + 1;
+			c_end = document.cookie.indexOf(";", c_start);
+			if (c_end == -1)
+				c_end = document.cookie.length;
+			return unescape(document.cookie.substring(c_start, c_end));
+		}
+	}
+	return ""
+}
+
+</script>
+</head>
+
+<body onload="checkLogin()">
+	<div class="row" style="line-height: 40px; background-color: #66CCFF;">
+		<div class="col-md-offset-1 col-md-4">
+			<p style="font-size: 31px; margin: auto auto; color: #FFFFFF;"
+				class="font_carrot">宠爱有家，品质优佳!</p>
+		</div>
+		<div class="col-md-6">
+			<div style="text-align: right;" id="longandregist">
+				<a href="login.html" style="color: #FFFFFF;">登录&nbsp;|</a><span><a
+					href="register.html " style="color: #FFFFFF;">&nbsp;注册</a></span>
+			</div>
+		</div>
+	</div>
+	</div>
+
+	<div class=container style="line-height: 40px; background-color:;">
+		<br />
+		<form class="form-inline ">
+			<div class="col-md-5 ">
+				<p class="font_carrot " style="font-size: 50px;">宠物店管理系统</p>
+			</div>
+
+			<div class="col-md-7 ">
+				<div style="text-align: right;">
+					<form class="form-inline right " id="search_form ">
+						<input type="text " class="form-control " id="bookName "
+							placeholder=" " /> <input type="button "
+							class="btn btn-primary " value="搜索 " style="width: 60px;" />
+					</form>
+				</div>
+			</div>
+	</div>
+
+	<br />
+
+	<div id="navbar " style="background: #F9F9F9">
+		<div class="container ">
+
+			<ul class="nav nav-pills " role="tablist ">
+				<li role="presentation " id="1 "><a href="main.html ">首页</a></li>
+				<li role="presentation " id="2 "><a href="foster.html ">寄养</a>
+				</li>
+				<li role="presentation " id="3 "><a href="treat.html ">医疗</a></li>
+				<li role="presentation " id="4 " class="active"><a
+					href="contactUs.html ">联系我们</a></li>
+				<li role="presentation " id="5 "><a href="personalCenter.html ">个人中心</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<br />
+	<!--百度地图容器-->
+
+	<div class="row container"
+		style="line-height: 40px; background-color: #66CCFF; margin-left: 60px; margin-right: 60px;">
+		<div class="col-md-1">
+			<p style="font-size: 31px; margin: auto auto; color: #FFFFFF;">联系方式：</p>
+		</div>
+		<div class="col=md-1">
+			<p style="font-size: 20px; margin: auto auto; color: #FFFFFF;">电话：15161132332
+				| 15161166601 &nbsp;邮箱：1024792505@qq.com</p>
+		</div>
+	</div>
+	<br />
+
+	<div class="row">
+		<div class="col-md-3">
+			<p style="font-size: 31px;" class="font_carrot">地图：</p>
+		</div>
+		<div class="10">
+			<div style="width: 697px; height: 550px; border: #ccc solid 1px;"
+				id="dituContent"></div>
+		</div>
+	</div>
+
+
+</body>
+
+<script type="text/javascript">
+	//创建和初始化地图函数：
+	function initMap() {
+		createMap(); //创建地图
+		setMapEvent(); //设置地图事件
+		addMapControl(); //向地图添加控件
+	}
+
+	//创建地图函数：
+	function createMap() {
+		var map = new BMap.Map("dituContent"); //在百度地图容器中创建一个地图
+		var point = new BMap.Point(119.986473, 31.824972); //定义一个中心点坐标
+		map.centerAndZoom(point, 17); //设定地图的中心点和坐标并将地图显示在地图容器中
+		window.map = map; //将map变量存储在全局
+	}
+
+	//地图事件设置函数：
+	function setMapEvent() {
+		map.enableDragging(); //启用地图拖拽事件，默认启用(可不写)
+		map.enableScrollWheelZoom(); //启用地图滚轮放大缩小
+		map.enableDoubleClickZoom(); //启用鼠标双击放大，默认启用(可不写)
+		map.enableKeyboard(); //启用键盘上下左右键移动地图
+	}
+
+	//地图控件添加函数：
+	function addMapControl() {
+		//向地图中添加缩放控件
+		var ctrl_nav = new BMap.NavigationControl({
+			anchor : BMAP_ANCHOR_TOP_LEFT,
+			type : BMAP_NAVIGATION_CONTROL_LARGE
+		});
+		map.addControl(ctrl_nav);
+		//向地图中添加缩略图控件
+		var ctrl_ove = new BMap.OverviewMapControl({
+			anchor : BMAP_ANCHOR_BOTTOM_RIGHT,
+			isOpen : 1
+		});
+		map.addControl(ctrl_ove);
+		//向地图中添加比例尺控件
+		var ctrl_sca = new BMap.ScaleControl({
+			anchor : BMAP_ANCHOR_BOTTOM_LEFT
+		});
+		map.addControl(ctrl_sca);
+	}
+
+	initMap(); //创建和初始化地图
+</script>
+
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>订单结算</title>
+<script src="resources/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap-theme.min.css">
+<script src="resources/layer/layer.js" type="text/javascript"></script>
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="resources/layer/layer.js"></script>
+<script type="text/javascript">
+	//获取cookie的值
+	function getCookie(c_name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return ""
+	}
+
+	//删除cookie
+	function delCookie(name) {
+		var exp = new Date();
+		exp.setTime(exp.getTime() - 1);
+		var cval = getCookie(name);
+		if (cval != null)
+			document.cookie = name + "=" + cval + ";expires="
+					+ exp.toGMTString();
+	}
+
+	//查询订单
+	function queryCleanOrder() {
+		var orderId = getCookie('cleanOrderId');
+		var orderKind = getCookie('cleanOrderKind');
+		alert('tst');
+		if (orderKind.indexOf("寄养") == 0) {
+			$('#foster_form').show();
+			$.ajax({
+				type : "GET",
+				url : "petFoster/" + orderId,
+				success : function(fosterOrder) {
+					
+					fillForm(fosterOrder);
+					//delCookie('cleanOrderId');
+					//delCookie('cleanOrderKind');
+				}
+			})
+		} else if (orderKind.indexOf("医疗") == 0) {
+			$('#treat_form').show();
+			$.ajax({
+				type : "GET",
+				url : "petTreat/" + orderId,
+				success : function(treatOrder) {
+					fillTreatForm(treatOrder);
+					//delCookie('cleanOrderId');
+					//delCookie('cleanOrderKind');
+				}
+			})
+		}
+	}
+	
+	//填充宠物医疗订单
+	function fillTreatForm(treatOrder){
+		$('#treat_userName').text(treatOrder.userName);
+		$('#treat_petName').text(treatOrder.petName);
+		$('#treat_petKind').text(treatOrder.petKind);
+		$('#treatKind').text(treatOrder.treatKind);
+		$('#treat_price').text(treatOrder.businessPrice);
+		$('#treat_count').text(treatOrder.discount);
+		$('#treat_total').text($('#treat_price').text()*treatOrder.discount*0.1);
+	}
+	
+	//实时监听计算总花费
+	  function bb(e){
+			var cost =  $('#treat_price').text();
+			var extro_cost = $('#treat_extro_cost').val();
+			var total =Number(cost) + Number(extro_cost);//两个数相加一脸懵逼
+	  	$('#treat_total').text(total*($('#treat_count').text()*0.1));
+	  }
+	
+	//填充宠物寄养订单
+	function fillForm(fosterOrder) {
+		$('#userName').text(fosterOrder.userName);
+		$('#petName').text(fosterOrder.petName);
+		$('#petKind').text(fosterOrder.petKind);
+		$('#fosterKind').text(
+				fosterOrder.weight + "-" + (fosterOrder.weight + 10) + "  kg 寄养");
+		$('#food').text(fosterOrder.food == 0 ? '不带食物' : '自带食物');
+		var d=new Date();
+		var day=d.getDate();
+		var month=d.getMonth() + 1;
+		var year=d.getFullYear();
+		var daycount = calculateDate(fosterOrder.orderTime, year+'-'+month+'-'+day);
+		$('#price').text(fosterOrder.businessPrice);
+		$('#fosterDay').text(daycount);
+		$('#cost').text(daycount*fosterOrder.businessPrice);
+		$('#count').text(fosterOrder.discount);
+		$('#total').text($('#cost').text()*fosterOrder.discount*0.1);
+	}
+	
+	//返回两个日期之间的天数
+  function calculateDate(sDate1, sDate2){   //sDate1和sDate2是2008-12-13格式
+      var aDate, oDate1, oDate2, iDays;
+      aDate = sDate1.split("-");
+      oDate1 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);   //转换为12-13-2008格式
+      aDate = sDate2.split("-");
+      oDate2 = new Date(aDate[1] + '-' + aDate[2] + '-' + aDate[0]);
+      iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 /24);   //把相差的毫秒数转换为天数
+      //alert(iDays);
+      return iDays;
+  }
+	
+	//实时监听计算总花费
+  function aa(e){
+		var cost =  $('#cost').text();
+		var extro_cost = $('#extro_cost').val();
+		var total =Number(cost) + Number(extro_cost);//两个数相加一脸懵逼
+  	$('#total').text(total*($('#count').text()*0.1));
+  }
+	
+	function submitButton(){
+		var orderId = getCookie('cleanOrderId');
+		var cost = $('#total').text();
+		$.ajax({
+			type : "GET",
+			url : "petFoster/" + orderId + "/" + cost,
+			success : function(str) {
+				layer.msg('订单结算成功');
+				sleep(1000);
+				delCookie('cleanOrderId');
+				delCookie('cleanOrderKind');
+				window.location.href="http://192.168.191.1:8080/PetStore/orderManagerment.html";
+			}
+		})
+	}
+	
+	//宠物医疗订单结算
+	function treatButton(){
+		var orderId = getCookie('cleanOrderId');
+		var cost = $('#treat_total').text();
+		$.ajax({
+			type : "GET",
+			url : "petFoster/" + orderId + "/" + cost,
+			success : function(str) {
+				layer.msg('订单结算成功');
+				sleep(1000);
+				delCookie('cleanOrderId');
+				delCookie('cleanOrderKind');
+				window.location.href="http://192.168.191.1:8080/PetStore/orderManagerment.html";
+			}
+		})
+	}
+	
+	function sleep(numberMillis) { 
+		var now = new Date(); 
+		var exitTime = now.getTime() + numberMillis; 
+		while (true) { 
+			now = new Date(); 
+			if (now.getTime() > exitTime) 
+				return;
+		} 
+	}
+</script>
+</head>
+<body class="container" onload="queryCleanOrder()">
+	<div align="center">
+		<h1 align="center">
+			<font color="gray">订单结算</font>
+		</h1>
+	</div>
+
+	<div id="foster_form" style="display: none">
+		<form class="form-horizontal" role="form">
+			<div>
+				<label for="userName" class="col-md-5 control-label">用户名：</label>
+				<p id="userName"></p>
+			</div>
+			<br>
+			<div>
+				<label for="petName" class="col-md-5 control-label">宠物名：</label>
+				<p id="petName"></p>
+			</div>
+			<br>
+			<div>
+				<label for="petKind" class="col-md-5 control-label">宠物种类：</label>
+				<p id="petKind"></p>
+			</div>
+			<br>
+			<div>
+				<label for="fosterKind" class="col-md-5 control-label">业务类型：</label>
+				<p id="fosterKind"></p>
+			</div>
+			<br>
+			<div>
+				<label for="food" class="col-md-5 control-label">自带食物：</label>
+				<p id="food"></p>
+			</div>
+			<br>
+			<div>
+				<label for="price" class="col-md-5 control-label">基本单价(元/天)：</label>
+				<p id="price"></p>
+			</div>
+			<br>
+			<div>
+				<label for="fosterDay" class="col-md-5 control-label">寄养天数(天)：</label>
+				<p id="fosterDay"></p>
+			</div>
+			<br>
+			<div>
+				<label for="cost" class="col-md-5 control-label">基本花费(元)：</label>
+				<p id="cost"></p>
+			</div>
+			<br>
+			<div class="form-group has-feedback">
+				<label for="extro_cost" class="col-md-5 control-label">额外开销(元)：</label>
+				<div class="col-md-3">
+					<input class="form-control" id="extro_cost" oninput="aa(event)"
+						placeholder=""> <span id="userName_check"
+						class="glyphicon form-control-feedback"></span>
+				</div>
+			</div>
+			<br>
+			<div>
+				<label for="count" class="col-md-5 control-label">折扣：</label>
+				<p id="count"></p>
+			</div>
+			<br> <br>
+			<div>
+				<label for="total" class="col-md-5 control-label">总花费(元)：</label>
+				<p id="total"></p>
+			</div>
+			<br>
+		</form>
+		<div class="text-center">
+			<button id="btn_confirm" class="btn btn-default"
+				onclick='submitButton()'>确&nbsp;定</button>
+		</div>
+	</div>
+	<!-- 宠物医疗表单 -->
+	<div id="treat_form" style="display: none">
+		<form class="form-horizontal" role="form">
+			<div>
+				<label for="treat_userName" class="col-md-5 control-label">用户名：</label>
+				<p id="treat_userName"></p>
+			</div>
+			<br>
+			<div>
+				<label for="treat_petName" class="col-md-5 control-label">宠物名：</label>
+				<p id="treat_petName"></p>
+			</div>
+			<br>
+			<div>
+				<label for="treat_petKind" class="col-md-5 control-label">宠物种类：</label>
+				<p id="treat_petKind"></p>
+			</div>
+			<br>
+			<div>
+				<label for="treatKind" class="col-md-5 control-label">业务类型：</label>
+				<p id="treatKind"></p>
+			</div>
+			<br>
+			<div>
+				<label for="treat_price" class="col-md-5 control-label">起始费用：</label>
+				<p id="treat_price"></p>
+			</div>
+			<br>
+			<div class="form-group has-feedback">
+				<label for="treat_extro_cost" class="col-md-5 control-label">额外开销(元)：</label>
+				<div class="col-md-3">
+					<input class="form-control" id="treat_extro_cost"
+						oninput="bb(event)" placeholder="">
+				</div>
+			</div>
+			<br>
+			<div>
+				<label for="treat_count" class="col-md-5 control-label">折扣：</label>
+				<p id="treat_count"></p>
+			</div>
+			<br> <br>
+			<div>
+				<label for="treat_total" class="col-md-5 control-label">总花费(元)：</label>
+				<p id="treat_total"></p>
+			</div>
+			<br>
+		</form>
+		<div class="text-center">
+			<button id="btn_confirm" class="btn btn-default"
+				onclick='treatButton()'>确&nbsp;定</button>
+		</div>
+	</div>
+</body>
+</html>

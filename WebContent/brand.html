@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>宠物店管理系统（管理员）</title>
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<!-- 移动设备优先-->
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap-theme.min.css">
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/less/scaffolding.less">
+<script src="resources/bootstrap-3.3.7/js/dropdown.js"></script>
+<script src="resources/bootstrap-3.3.7/js/collapse.js"></script>
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<style type="text/css">
+iframe {
+	margin-top: 120px;
+}
+</style>
+<script type="text/javascript">
+	function user(){
+		$('#usermanage').show();
+		$('#workermanage').hide();
+		$('#ordermanage').hide();
+	}
+	
+	function worker(){
+		$('#usermanage').hide();
+		$('#workermanage').show();
+		$('#ordermanage').hide();
+	}
+	
+	function order(){
+		$('#usermanage').hide();
+		$('#workermanage').hide();
+		$('#ordermanage').show();
+	}
+</script>
+<script type="text/javascript">
+function checkLogin(){
+	var userTel = getCookie('userPhoneNumber');
+	if(userTel.indexOf("110") >= 0){
+		
+	}else{
+		window.location.href="http://192.168.191.1:8080/PetStore/ERROR.html";
+	}
+}
+
+//获取cookie的值
+function getCookie(c_name) {
+	if (document.cookie.length > 0) {
+		c_start = document.cookie.indexOf(c_name + "=");
+		if (c_start != -1) {
+			c_start = c_start + c_name.length + 1;
+			c_end = document.cookie.indexOf(";", c_start);
+			if (c_end == -1)
+				c_end = document.cookie.length;
+			return unescape(document.cookie.substring(c_start, c_end));
+		}
+	}
+	return ""
+}
+</script>
+</head>
+<body class="container" onload="checkLogin()">
+	<nav
+		class="navbar navbar-inverse  navbar-fixed-top navbar-static-top container"
+		role="navigation">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#"><img src="resources/pet.png"
+					height="22" width="40" /></a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown">人员管理 <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" onclick="user()">会员管理</a></li>
+							<li><a href="#" onclick="worker()">工作人员管理</a></li>
+						</ul></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown">订单管理 <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" onclick="order()">未处理订单</a></li>
+						</ul></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<p class="navbar-text">
+						<font color="#778899">@宠物店管理系统</font>
+					</p>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
+	<iframe id="usermanage" name="usermanage"
+		onload="this.height=usermanage.document.body.scrollHeight"
+		src="userManagement.html" width="100%" height="550" frameborder="0"></iframe>
+	<iframe style="display: none" id="workermanage" name="workermanage"
+		onload="this.height=usermanage.document.body.scrollHeight"
+		src="workerManagement.html" width="100%" height="550" frameborder="0"></iframe>
+	<iframe style="display: none" id="ordermanage" name="ordermanage"
+		onload="this.height=usermanage.document.body.scrollHeight"
+		src="orderManagerment.html" width="100%" height="550" frameborder="0"></iframe>
+</body>
+</html>

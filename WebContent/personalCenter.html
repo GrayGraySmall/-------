@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>个人中心</title>
+<link rel="stylesheet" href="resources/css/personalCenter.css" />
+<link rel="stylesheet" href="resources/css/header.css" />
+<link rel="stylesheet" href="resources/css/register.css" />
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="resources/js/header.js"></script>
+<link rel="stylesheet" href="resources/css/personalCenter.css" />
+<script src="resources/js/personalCenter.js" type="text/javascript"></script>
+<script type="text/javascript" src="resources/layer/layer.js"></script>
+
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+	function fillTest() {
+		$('#userName').text(getCookie('userName'));
+		$('#userKind').text(getCookie('kindId'));
+		$('#userSex').text(getCookie('userSex'));
+		$('#registerTime').text(getCookie('regerstTime'));
+		checkLogin();
+	}
+
+	//清除所有Cookie
+	function clearCookie() {
+		var keys = document.cookie.match(/[^ =;]+(?=\=)/g);
+		if (keys) {
+			for (var i = keys.length; i--;)
+				document.cookie = keys[i] + '=0;expires='
+						+ new Date(0).toUTCString()
+		}
+		layer.msg('注销登录成功');
+		window.location.href="http://192.168.191.1:8080/PetStore/login.html";
+	}
+	
+	function checkLogin() {
+		var userTel = getCookie('userPhoneNumber');
+		if (userTel == "" || userTel == null) {
+			$('#longandregist').show();
+		} else {
+			$('#longandregist').hide();
+		}
+	}
+	//获取cookie的值
+	function getCookie(c_name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return ""
+	}
+</script>
+
+</head>
+
+<body onload="fillTest()">
+	<div class="row" style="line-height: 40px; background-color: #66CCFF;">
+		<div class="col-md-offset-1 col-md-4">
+			<p style="font-size: 31px; margin: auto auto; color: #FFFFFF;"
+				class="font_carrot">宠爱有家，品质优佳!</p>
+		</div>
+		<div class="col-md-6">
+			<div style="text-align: right;" id="longandregist">
+				<a href="login.html" style="color: #FFFFFF;">登录&nbsp;|</a><span><a
+					href="register.html " style="color: #FFFFFF;">&nbsp;注册</a></span>
+			</div>
+		</div>
+	</div>
+
+	<div class=container style="line-height: 40px;">
+		<br />
+		<form class="form-inline ">
+			<div class="col-md-5 ">
+				<p class="font_carrot " style="font-size: 50px;">宠物店管理系统</p>
+			</div>
+
+			<div class="col-md-7 ">
+				<div style="text-align: right;">
+					<form class="form-inline right " id="search_form ">
+						<input type="text " class="form-control " id="bookName "
+							placeholder=" " /> <input type="button "
+							class="btn btn-primary " value="搜索 " style="width: 60px;" />
+					</form>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<br />
+
+	<div id="navbar " style="background: #F9F9F9">
+		<div class="container ">
+
+			<ul class="nav nav-pills " role="tablist ">
+				<li role="presentation " id="1 "><a href="main.html ">首页</a></li>
+				<li role="presentation " id="2 "><a href="foster.html ">寄养</a>
+				</li>
+				<li role="presentation " id="3 "><a href="treat.html ">医疗</a></li>
+				<li role="presentation " id="4 "><a href="contactUs.html ">联系我们</a>
+				</li>
+				<li role="presentation " id="5 " class="active"><a
+					href="personalCenter.html ">个人中心</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<br />
+
+	<div class="container" style="background: #F9F9F9;">
+		<table border="0" align="left">
+			<tr>
+				<td height="140px"><img src="resources/img/timg.jpg"
+					width="100" height="100" class="img-circle" /></td>
+				<td>
+					<div style="margin-left: 30px;">
+						<h2 id="userName">用户姓名</h2>
+						<small id="userKind" style="font-size: 15px;">用户等级</small>级&nbsp;|&nbsp;<small
+							id="userSex" style="font-size: 15px;">性别</small>&nbsp;|&nbsp;<small
+							id="registerTime" style="font-size: 15px;">注册时间</small>&nbsp;|&nbsp;<small
+							style="font-size: 15px;"><a onclick="clearCookie()">注销登录</a></small>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="container" style="background: #F9F9F9;">
+		<ul id="navtabs_personalInfor" class="nav nav-tabs" role="tablist">
+			<li id="btn_myPro" role="presentation" class="active"><a
+				href="#">我的资料</a></li>
+			<li id="btn_myPet" role="presentation"><a href="#">我的宠物</a></li>
+			<li id="btn_myPurchase" role="presentation"><a href="#">消费记录</a>
+			</li>
+		</ul>
+	</div>
+	<div class="container" style="background: #F9F9F9;">
+		<iframe id='information_iframe' src="myPro_iframe.html" scrolling="no"
+			style="height: 500px;" width="100%" frameborder="0"></iframe>
+	</div>
+
+	<br />
+	<br />
+
+</body>
+
+</html>

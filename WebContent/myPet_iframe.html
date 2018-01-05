@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<link type="text/css" href="myPet_iframe.css" rel="stylesheet">
+<script type="text/javascript" src="myPet_iframe.jsp">
+	
+</script>
+
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<script type="text/javascript"
+	src="resources/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap.min.css" />
+
+<script type="text/javascript" src="resources/layer/layer.js"></script>
+
+<title>宠物资料</title>
+<style type="text/css">
+td {
+	font-size: medium;
+	width: 100px;
+	height: 40px;
+}
+
+.headtd {
+	font-family: "微软雅黑";
+	font-size: small;
+}
+</style>
+
+<script type="text/javascript">
+	function addPet() {
+		layer.open({
+			title : '添加宠物',
+			type : 2,
+			area : [ '500px', '400px' ],
+			fix : false,
+			scrollbar : false,
+			maxmin : true,
+			content : 'addPet.html'
+		})
+	}
+
+	/*下拉列表选择宠物填充
+	 */
+	function petFill() {
+		var userTel = getCookie('userPhoneNumber');
+		$.ajax({
+			Type : "GET",
+			url : "petAdd/" + userTel,
+			success : function(pets) {
+				filltable(pets);
+			}
+		})
+	}
+
+	function filltable(pets) {
+		clearUsersTable();
+		var table = document.getElementById('petTable');
+		for ( var index in pets) {
+			var newRow = table.insertRow();
+			var col1 = newRow.insertCell();
+			var col2 = newRow.insertCell();
+			var col3 = newRow.insertCell();
+			var col4 = newRow.insertCell();
+
+			col1.innerHTML = pets[index].petName;
+			col2.innerHTML = pets[index].petSex;
+			col3.innerHTML = pets[index].petKind;
+			col4.innerHTML = pets[index].petBirthday;
+		}
+	}
+
+	function clearUsersTable() {
+		var table = document.getElementById("petTable");
+		while (table.rows.length > 1)
+			table.deleteRow(1);
+	}
+
+	//获取cookie的值
+	function getCookie(c_name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return ""
+	}
+</script>
+</head>
+<body onload="petFill()">
+	<div>
+		<table class="table table-striped table-bordered table-hover"
+		id="petTable">
+			<tr class="headtd">
+				<td style="width: 120px;">宠物名字</td>
+				<td style="width: 50px;">性别</td>
+				<td style="width: 50px;">种类</td>
+				<td style="width: 100px;">生日</td>
+				<!--<td><input class="btn btn-primary" type="button" id="addPet" value="新增" onclick="addPet()" /></td>-->
+			</tr>
+		</table>
+		<br /> <input class="btn btn-primary" style="margin-left: 195px;"
+			type="button" id="addPet" value="新增" onclick="addPet()" />
+	</div>
+</body>
+
+</html>

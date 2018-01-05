@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>宠物店管理系统（管理员）</title>
+<script src="resources/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap-theme.min.css">
+<script src="resources/layer/layer.js" type="text/javascript"></script>
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="resources/layer/layer.js"></script>
+<script type="text/javascript">
+	function checkLogin(){
+		var userTel = getCookie('userPhoneNumber');
+		if(userTel == "" || userTel == null){
+			window.location.href="http://192.168.191.1:8080/PetStore/ERROR.html";
+		}
+	}
+	
+	//获取cookie的值
+	function getCookie(c_name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return ""
+	}
+</script>
+</head>
+<body onload="checkLogin()" class="container">
+	<iframe src="brand.html" width="100%" height="125" frameborder="0" ></iframe>
+	<iframe src="userManagement.html" width="100%" height="100%" frameborder="0" ></iframe>
+</body>
+</html>

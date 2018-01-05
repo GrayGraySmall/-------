@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>新增宠物</title>
+
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<script type="text/javascript"
+	src="resources/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap.min.css" />
+<script src="resources/layer/layer.js" type="text/javascript"></script>
+
+<!--My97DatePicker插件-->
+<script type="text/javascript"
+	src="resources/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+	/**
+	 * Created by zephyr on 2016-12-31.
+	 */
+	function addPet() {
+		//添加数据
+		var pet = new Object();
+		pet.petName = $('#petName_input').val();
+		pet.petKind = $('#petKind option:selected').val();
+		pet.petSex = $("input[name='petSex']:checked").val();
+		pet.petBirthday = new Date($('#petBirthday_input').val());
+		pet.petWeight = $('#petWeight option:selected').val();
+		pet.userPhoneNumber = getCookie('userPhoneNumber');
+		//装成json
+		var petJson = JSON.stringify(pet);
+
+		$.ajax({
+			type : "POST",
+			url : "petAdd",
+			contentType : "application/json; charset=utf-8",
+			data : petJson,
+			success : function(index) {
+				if (index.indexOf("RIGHT") == 0) {
+					layer.msg("添加宠物成功！");
+					//关闭当前iframe
+					window.location.href = "http://192.168.191.1:8080/PetStore/personalCenter.html";
+				} else {
+					layer.msg("添加宠物失败!");
+					//layer.msg("失败！");
+				}
+			}
+		})
+	}
+
+	//获取cookie的值
+	function getCookie(c_name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return ""
+	}
+
+	function confirm() {
+		/**********保存数据标记处*********/
+		//以下取值亲测有效！
+		var petName = $("#petName_input").val();
+		var petKind = $("#petKind").val();
+		var petSex = $("input[name='petSex']:checked").val();
+		var petBirthday = $("#petBirthday_input").val();
+
+		//关闭当前iframe
+		var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		parent.layer.close(index); //再执行关闭 
+	}
+</script>
+
+</head>
+
+<body>
+	<!--<form class="form-horizontal" role="form">
+			<div class="form-group">
+				<label for="petName_input" class="col-xs-5 control-label input-sm">宠物名字</label>
+				<div class="col-xs-2">
+					<input type="text" id="petName_input" class="form-control input-sm" placeholder="宠物名字" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="petKind" class="col-xs-5 control-label input-sm">宠物种类</label>
+				<div class="col-xs-2">
+					<select class="form-control input-sm" id="petKind">
+						<option value="-1">请选择</option>
+						<option value="dog">狗</option>
+						<option value="cat">猫</option>
+						<option value="other">其他</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="petSex" class="col-xs-5 control-label input-sm">性别</label>
+				<div class="col-xs-1">
+					<div class="radio">
+						<label><input type="radio" name="petSex"  value="male" checked>公</label>
+					</div>
+					<div class="radio">
+						<label><input type="radio" name="petSex"  value="female">母</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="petBirthday_input" class="col-xs-5 control-label input-sm">宠物生日</label>
+				<div class="col-xs-2">
+					<input type="text" id="petBirthday_input" class="form-control Wdate input-sm" onfocus="WdatePicker({lang:'zn-cn'})" style="height: 28px;" placeholder="点击选择日期" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-5 control-label input-sm"></label>
+				<div class="col-xs-3">
+					<button id="btn_confirm" class="btn btn-default input-sm" onclick="confirm()">保&nbsp存</button>
+				</div>
+			</div>
+		</form>-->
+	<br />
+	<div class="content">
+		<form id="myform">
+			<div class="form-group row">
+				<div class="left col-xs-3 text-right">
+					<label class="control-label">宠物名字</label>
+				</div>
+				<div class="right col-xs-8 text-left">
+					<input type="text" class="form-control" id="petName_input"
+						placeholder="宠物名字">
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<div class="left col-xs-3 text-right">
+					<label for="petKind" class="control-label">宠物种类</label>
+				</div>
+				<div class="right col-xs-8 text-left">
+					<select class="form-control" id="petKind">
+						<option value="-1">请选择</option>
+						<option value="狗">狗</option>
+						<option value="猫">猫</option>
+						<option value="鼠">鼠</option>
+						<option value="羊">羊</option>
+						<option value="other">其他</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<div class="left col-xs-3 text-right">
+					<label for="petSex" class="control-label">性别</label>
+				</div>
+				<div class="col-xs-2">
+					<div class="radio">
+						<label><input type="radio" name="petSex" value="公" checked>公</label>
+					</div>
+					<div class="radio">
+						<label><input type="radio" name="petSex" value="母">母</label>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-group row">
+				<div class="left col-xs-3 text-right">
+					<label for="petBirthday_input" class="control-label">宠物生日</label>
+				</div>
+				<div class="right col-xs-8 text-left">
+					<input type="text" id="petBirthday_input"
+						class="form-control Wdate" onfocus="WdatePicker({lang:'zn-cn'})"
+						style="height: 33px;" placeholder="点击选择日期" />
+				</div>
+			</div>
+			<div class="form-group row">
+				<div class="left col-xs-3 text-right">
+					<label for="petKind" class="control-label">宠物体重（kg）</label>
+				</div>
+				<div class="right col-xs-8 text-left">
+					<select class="form-control" id="petWeight">
+						<option value="-1">请选择</option>
+						<option value="0">0-5</option>
+						<option value="5">5-10</option>
+						<option value="10">10-20</option>
+						<option value="20">20-30</option>
+						<option value="30">30-50</option>
+						<option value="50">50以上</option>
+					</select>
+				</div>
+			</div>
+
+		</form>
+		<div class="form-group text-center submit">
+			<button id="btn_confirm" class="btn btn-default" onclick="addPet()">保&nbsp;存</button>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+ul {
+	font-size: x-large;
+}
+
+@font-face {
+	font-family: 'mnj';
+	src: url('../font/汉仪萝卜体简.ttf');
+}
+
+.font_carrot {
+	font-family: 'mnj';
+}
+
+.font_jianshanhu {
+	font-family: 'jsh';
+}
+
+a {
+	color: #FFFFFF;
+}
+
+body {
+	background-image: url();
+	background-repeat: no-repeat;
+	background-size: 100%;
+}

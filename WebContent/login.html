@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>login</title>
+<link rel="stylesheet" href="resources/css/register.css" />
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="resources/js/header.js"></script>
+<script type="text/javascript" src="resources/layer/layer.js"></script>
+<script type="text/javascript">
+	function login() {
+		//初始化用户对象
+		var login = new Object();
+		var tel_id = document.getElementById("phoneNumber_input");
+		login.tel = tel_id.value;
+		var password_id = document.getElementById("password_input");
+		login.password = password_id.value;
+		//转成JSON字符串
+		var loginjson = JSON.stringify(login);
+		$.ajax({
+					type : "POST",
+					url : "userLogin",
+					contentType : "application/json; charset=utf-8",
+					data : loginjson,
+					success : function(str) {
+						if (str.indexOf("COREECT") == 0) {
+							layer.msg("登录成功");
+							//登录成功再说
+							getUsers(login.tel);
+							sleep(500);
+							window.location.href = "http://192.168.191.1:8080/PetStore/main.html";
+						} else {
+							//alert("登录失败！");
+							layer.msg("失败！");
+						}
+					}
+				})
+	}
+
+	function sleep(numberMillis) {
+		var now = new Date();
+		var exitTime = now.getTime() + numberMillis;
+		while (true) {
+			now = new Date();
+			if (now.getTime() > exitTime)
+				return;
+		}
+	}
+
+	//用来设置cookie
+	function setCookie(c_name, value, expiredays) {
+		var exdate = new Date();
+		exdate.setDate(exdate.getDate() + expiredays);
+		document.cookie = c_name
+				+ "="
+				+ escape(value)
+				+ ((expiredays == null) ? "" : ";expires="
+						+ exdate.toGMTString());
+	}
+
+	//请求用户信息，并将用户信息保存到cookie
+	function getUsers(userTel) {
+		$.ajax({
+			type : "GET",
+			url : "userLogin/" + userTel,
+			success : function(user) {
+				setCookie('userPhoneNumber', user.userPhoneNumber, 30);
+				setCookie('kindId', user.kindId, 30);
+				setCookie('userName', user.userName, 30);
+				setCookie('userSex', user.userSex, 30);
+				setCookie('regerstTime', user.regerstTime, 30);
+			}
+		})
+	}
+</script>
+</head>
+<body onload="loadHeader()">
+	<div id="header"></div>
+	<br />
+
+	<div style="height: 50px;"></div>
+	<table style="text-align: center;">
+		<tr>
+			<td style="padding-left: 140px;"><img
+				src="resources/img/1483348769949.jpg" width="400px"
+				class="img-circle" /></td>
+			<td style="padding-left: 140px;"><input class="form-control"
+				id="phoneNumber_input" placeholder="电话号码"
+				onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"
+				onafterpaste="this.value=this.value.replace(/[^0-9]/g,'')">
+				<br /> <input type="password" class="form-control"
+				id="password_input" placeholder="密码"> <br />
+				<button id="btn_login" class="btn btn-default" onclick="login()">登&nbsp录</button></td>
+		</tr>
+	</table>
+	<br />
+	<br />
+</body>
+</html>

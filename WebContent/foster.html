@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>宠物寄养</title>
+
+<script type="text/javascript"
+	src="resources/jquery1.9.1/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="resources/js/header.js"></script>
+<link rel="stylesheet" href="resources/css/foster.css" />
+<link rel="stylesheet" href="resources/css/register.css" />
+<link rel="stylesheet" href="resources/css/header.css" />
+
+<!--Bootstrap资源-->
+<link rel="stylesheet"
+	href="resources/bootstrap-3.3.7/dist/css/bootstrap.min.css" />
+<script type="text/javascript"
+	src="resources/bootstrap-3.3.7/dist/js/bootstrap.min.js"></script>
+<script src="resources/layer/layer.js" type="text/javascript"></script>
+
+<!--My97DatePicker插件-->
+<script type="text/javascript"
+	src="resources/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+	/**
+	 * Created by zephyr on 2016-12-26.
+	 */
+	function foster() {
+		var fosteViewInfo = new Object();
+		fosteViewInfo.petName = $('#foster_select option:selected').text();//选择寄养的宠物
+		fosteViewInfo.petId = $('#foster_select option:selected').val();
+		fosteViewInfo.orderTime = new Date($('#deliveryTime_input').val());//选择寄养的时间
+		fosteViewInfo.food = $("input[name='takeFood']:checked").val();//是否自带食物
+		fosteViewInfo.orderSupp = $('#sup_input').val();//下面暂时这么写
+		fosteViewInfo.userTel = getCookie('userPhoneNumber');
+		//转成JSON字符串
+		var fosteViewInfoJson = JSON.stringify(fosteViewInfo);
+		alert(fosteViewInfoJson);
+		$.ajax({
+			type : "POST",
+			url : "petFoster",
+			contentType : "application/json; charset=utf-8",
+			data : fosteViewInfoJson,
+			success : function(index) {
+				if (index.indexOf("RIGHT") == 0) {
+					layer.msg("订单提交成功！");
+				} else {
+					layer.msg("失败!");
+					//layer.msg("失败！");
+				}
+			}
+		})
+	}
+
+	/*下拉列表选择宠物填充
+	 */
+	function petFill() {
+		checkLogin();
+		var userTel = getCookie('userPhoneNumber');
+		$.ajax({
+			Type : "GET",
+			url : "petAdd/" + userTel,
+			success : function(pets) {
+				clearSelect();
+				var select = document.getElementById("foster_select");
+				//option.innerHTML = "123";
+				for ( var index in pets) {
+					select.options.add(new Option(pets[index].petName,
+							pets[index].petId));
+				}
+			}
+		})
+	}
+
+	//获取cookie的值
+	function getCookie(c_name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return ""
+	}
+	
+	function checkLogin() {
+		var userTel = getCookie('userPhoneNumber');
+		if (userTel == "" || userTel == null) {
+			$('#longandregist').show();
+		} else {
+			$('#longandregist').hide();
+		}
+	}
+	//获取cookie的值
+	function getCookie(c_name) {
+		if (document.cookie.length > 0) {
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1)
+					c_end = document.cookie.length;
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return ""
+	}
+
+	function clearSelect() {
+		$('#foster_select').empty();
+	}
+</script>
+</head>
+<body onload="petFill()">
+	<div class="row" style="line-height: 40px; background-color: #66CCFF;">
+		<div class="col-md-offset-1 col-md-4">
+			<p style="font-size: 31px; margin: auto auto; color: #FFFFFF;"
+				class="font_carrot">宠爱有家，品质优佳!</p>
+		</div>
+		<div class="col-md-6">
+			<div style="text-align: right;" id="longandregist">
+				<a href="login.html" style="color: #FFFFFF;">登录&nbsp;|</a><span><a
+					href="register.html " style="color: #FFFFFF;">&nbsp;注册</a></span>
+			</div>
+		</div>
+	</div>
+
+	<div class=container style="line-height: 40px;">
+		<br />
+		<form class="form-inline ">
+			<div class="col-md-5 ">
+				<p class="font_carrot " style="font-size: 50px;">宠物店管理系统</p>
+			</div>
+
+			<div class="col-md-7 ">
+				<div style="text-align: right;">
+					<form class="form-inline right " id="search_form ">
+						<input type="text " class="form-control " id="bookName "
+							placeholder=" " /> <input type="button "
+							class="btn btn-primary " value="搜索 " style="width: 60px;" />
+					</form>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<br />
+
+	<div id="navbar " style="background: #F9F9F9">
+		<div class="container ">
+
+			<ul class="nav nav-pills " role="tablist ">
+				<li role="presentation " id="1 "><a href="main.html ">首页</a></li>
+				<li role="presentation " id="2 " class="active"><a
+					href="foster.html ">寄养</a></li>
+				<li role="presentation " id="3 "><a href="treat.html ">医疗</a></li>
+				<li role="presentation " id="4 "><a href="contactUs.html ">联系我们</a>
+				</li>
+				<li role="presentation " id="5 "><a href="personalCenter.html ">个人中心</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<br />
+
+	<form class="form-horizontal" role="form">
+		<div class="form-group">
+			<label for="choosePet_input" class="col-md-5 control-label">选择宠物</label>
+			<div class="col-md-3">
+				<select id="foster_select" class="form-control">
+					<option value="-1">请选择</option>
+				</select>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="deliveryTime_input" class="col-md-5 control-label">送达日期</label>
+			<div class="col-md-3">
+				<input type="text" id="deliveryTime_input"
+					class="form-control Wdate" onfocus="WdatePicker({lang:'zn-cn'})"
+					style="height: 33px;" placeholder="点击选择日期" />
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="takeFood" class="col-md-5 control-label">是否自带食物</label>
+			<div class="col-md-1">
+				<div class="radio">
+					<label><input type="radio" name="takeFood"
+						value="wontTakeFood" checked>不带</label>
+				</div>
+				<div class="radio">
+					<label><input type="radio" name="takeFood"
+						value="willtakeFood">带&#12288</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="sup_input" class="col-md-5 control-label">补充</label>
+			<div class="col-md-3">
+				<textarea class="form-control" rows="3" id="sup_input"
+					placeholder="多一点补充 多一份贴心"></textarea>
+			</div>
+		</div>
+
+		<br />
+	</form>
+	<div class="col-md-11">
+		<button id="btn_confirm" class="btn btn-default" onclick='foster()'>确&nbsp;定</button>
+	</div>
+	<br />
+</body>
+</html>
